@@ -27,10 +27,40 @@ app.get('/error', (req, res) => {
   throw new Error('ça marche pas');
 })
 
-app.use('/users', userRoutes);
-app.use('/posts', postsRoutes);
+// Middleware
+const printDate = (req, res, next) => {
+  console.log(new Date(Date.now()));
+  next();
+};
+const appName = (req, res, next) => {
+  res.set({ "Application-name": " ecv-digital" });
+  next();
+};
+const authorize = (req, res, next) => {
+  if (!req.headers["Authorization"]) res.status(403).send();
+  next();
+};
+const ContextUser = (req, res, next) => {
+  res.set({ "App-Context": "Users" });
+  next();
+};
+const ContextPosts = (req, res, next) => {
+  res.set({ "App-Context": "Posts" });
+  next();
+};
+const ContextComments = (req, res, next) => {
+  res.set({ "App-Context": "Comments" });
+  next();
+};
+app.use(printDate);
+app.use(appName);
+
+//app.use(authorize);
+
+app.use('/users',ContextUser, userRoutes);
+app.use('/posts',ContextPosts, postsRoutes);
 app.use('/roles', rolesRoutes);
-app.use('/comments', commentsRoutes);
+app.use('/comments',ContextComments, commentsRoutes);
 
 app.use(joiErrorHandler);
 app.use(errorHandler);
