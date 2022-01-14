@@ -3,7 +3,7 @@ const createError = require('http-errors');
 
 const createUser = async (req, res, next) => {
 
-  return next(createError(404));
+  // return next(createError(404));
 
   const { firstname, lastname, email, github_url } = req.body;
   const user = await User.create({
@@ -13,7 +13,8 @@ const createUser = async (req, res, next) => {
     github_url
   });
 
-  return res.json(user);
+    return user ? res.json(user) : next(createError(404))
+  // return res.json(user);
 }
 
 const updateUser = async (req, res) => {
@@ -32,12 +33,13 @@ const updateUser = async (req, res) => {
     return res.json(user);
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -55,12 +57,13 @@ const deleteUser = async (req, res) => {
     return res.status(204).json();
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -87,7 +90,8 @@ const getOneUser = async (req, res, next) => {
 
 const getManyUsers = async (req, res) => {
   const users = await User.findAll();
-  return res.json(users);
+  return users ? res.json(users) : next(createError(500))
+  // return res.json(users);
 }
 
 module.exports = {

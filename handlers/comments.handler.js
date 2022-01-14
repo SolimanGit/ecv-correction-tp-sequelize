@@ -1,4 +1,5 @@
 const { Comment } = require('../models');
+const createError = require('http-errors')
 
 const createComment = async (req, res) => {
   const { content, date, author_id, post_id } = req.body;
@@ -8,8 +9,8 @@ const createComment = async (req, res) => {
     postId: post_id,
     authorId: author_id,
   });
-
-  return res.json(comment);
+  return comment ? res.json(comment) : next(createError(500))
+  // return res.json(comment);
 }
 
 const updateComment = async (req, res) => {
@@ -28,12 +29,13 @@ const updateComment = async (req, res) => {
     return res.json(comment);
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -51,12 +53,13 @@ const deleteComment = async (req, res) => {
     return res.status(204).json();
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -65,10 +68,11 @@ const getOneComment = async (req, res) => {
   const comment = await Comment.findByPk(req.params.id);
 
   if(!comment) {
-    return res.status(404).json({
-      status: 404,
-      message: 'Resource not found',
-    })
+    return next(createError(404))
+    // return res.status(404).json({
+    //   status: 404,
+    //   message: 'Resource not found',
+    // })
   }
 
   return res.json(Comment);
@@ -76,7 +80,8 @@ const getOneComment = async (req, res) => {
 
 const getManyComments = async (req, res) => {
   const comments = await Comment.findAll();
-  return res.json(comments);
+  return comments ? res.json(comments) : next(createError(500))
+  // return res.json(comments);
 }
 
 module.exports = {

@@ -1,4 +1,5 @@
 const { Role } = require('../models');
+const createError = require('http-errors')
 
 const createRole = async (req, res) => {
   const { name } = req.body;
@@ -6,7 +7,8 @@ const createRole = async (req, res) => {
     name
   });
 
-  return res.json(role);
+  return role ? res.json(role) : next(createError(500))
+  // return res.json(role);
 }
 
 const updateRole = async (req, res) => {
@@ -25,12 +27,13 @@ const updateRole = async (req, res) => {
     return res.json(role);
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -48,12 +51,13 @@ const deleteRole = async (req, res) => {
     return res.status(204).json();
 
   } else {
-    res
-    .status(500)
-    .json({
-      status: 500,
-      message: 'Server error',
-    });
+    return next(createError(500))
+    // res
+    // .status(500)
+    // .json({
+    //   status: 500,
+    //   message: 'Server error',
+    // });
   }
 
 }
@@ -62,10 +66,11 @@ const getOneRole = async (req, res) => {
   const role = await Role.findByPk(req.params.id);
 
   if(!role) {
-    return res.status(404).json({
-      status: 404,
-      message: 'Resource not found',
-    })
+    return next(createError(404))
+    // return res.status(404).json({
+    //   status: 404,
+    //   message: 'Resource not found',
+    // })
   }
 
   return res.json(Role);
@@ -73,7 +78,8 @@ const getOneRole = async (req, res) => {
 
 const getManyRoles = async (req, res) => {
   const roles = await Role.findAll();
-  return res.json(roles);
+  return roles ? res.json(roles) : next(createError(500))
+  // return res.json(roles);
 }
 
 module.exports = {
