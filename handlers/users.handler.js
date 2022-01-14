@@ -85,6 +85,9 @@ const getOneUser = async (req, res) => {
 }
 
 const getManyUsers = async (req, res) => {
+
+  console.log(req.auth);
+
   const users = await User.findAll();
   return res.json(users);
 }
