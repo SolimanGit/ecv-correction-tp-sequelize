@@ -1,6 +1,10 @@
 const { User, Post } = require('../models');
+const createError = require('http-errors');
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
+
+  return next(createError(404));
+
   const { firstname, lastname, email, github_url } = req.body;
   const user = await User.create({
     firstname,
@@ -61,7 +65,7 @@ const deleteUser = async (req, res) => {
 
 }
 
-const getOneUser = async (req, res) => {
+const getOneUser = async (req, res, next) => {
   let user = null;
 
   if(req.query.displayPosts) {
@@ -75,19 +79,13 @@ const getOneUser = async (req, res) => {
   }
 
   if(!user) {
-    return res.status(404).json({
-      status: 404,
-      message: 'Resource not found',
-    })
+    return next(createError(404));
   }
 
   return res.json(user);
 }
 
 const getManyUsers = async (req, res) => {
-
-  console.log(req.auth);
-
   const users = await User.findAll();
   return res.json(users);
 }
